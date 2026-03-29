@@ -8,8 +8,6 @@ __pycache__/
 *.pyc
 
 # Generated files
-generated_audio/
-uploaded_PDFs/
 tmp/
 
 # Environment file

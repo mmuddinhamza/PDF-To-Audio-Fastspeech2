@@ -21,8 +21,8 @@ MODEL_ROOT = os.path.expanduser("~/PDF-To-Audio-Fastspeech2/models")
 
 
 #Directory configurations
-UPLOAD_PDF_DIR = "uploaded_PDFs"
-GENERATED_AUDIO_DIR = "generated_audio"
+UPLOAD_PDF_DIR = "data/uploaded_PDFs"
+GENERATED_AUDIO_DIR = "data/generated_audio"
 os.makedirs(UPLOAD_PDF_DIR, exist_ok=True)
 os.makedirs(GENERATED_AUDIO_DIR, exist_ok=True)
 
@@ -233,7 +233,7 @@ def list_files():
 @app.route("/")
 def serve_frontend():
 
-    return send_from_directory("web_ui", "web_ui_2.html")
+    return send_from_directory("templates", "web_ui_2.html")
 
 
 
