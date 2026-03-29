@@ -103,6 +103,7 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
+<<<<<<< HEAD
 ├── data/
 │   ├── multilingualcharmap.json
 │   ├── generated_audio/
@@ -119,4 +120,12 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 │   ├── web_ui_2.html
 │   └── web_ui.html
 └── tmp/
+=======
+├── text_preprocess_for_inference.py
+├── generated_audio/
+├── tmp/
+├── uploaded_PDFs/
+├── web_ui/
+└── models/
+>>>>>>> 53bb7b267155ceea0323c690cbc4334e6a1f79af
 ```
