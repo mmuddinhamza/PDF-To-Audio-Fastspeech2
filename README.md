@@ -8,6 +8,16 @@ This project is a web application that converts PDF files to audio using the Fas
 *   Convert PDF text to speech in multiple languages.
 *   Generate and play audio files.
 
+## Sample Demo
+
+Here is a sample of the generated audio:
+
+<audio controls>
+  <source src="data/generated_audio/hello.wav" type="audio/wav">
+Your browser does not support the audio element.
+</audio>
+
+
 ## Technologies Used
 
 *   Python
@@ -90,17 +100,32 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 ## Project Structure
 ```
 .
-├── api_testing.py
-├── app.py
-├── environment.yml
-├── get_phone_mapped_python.py
-├── inference.py
-├── multilingualcharmap.json
+├── .gitignore
+├── README.md
 ├── requirements.txt
+<<<<<<< HEAD
 ├── text_preprocess_for_inference.py
 ├── generated_audio/
 ├── tmp/
 ├── uploaded_PDFs/
 ├── web_ui/
 └── models/
+=======
+├── data/
+│   ├── multilingualcharmap.json
+│   ├── generated_audio/
+│   └── uploaded_PDFs/
+├── models/
+├── src/
+│   ├── app.py
+│   ├── get_phone_mapped_python.py
+│   ├── inference.py
+│   └── text_preprocess_for_inference.py
+├── static/
+├── templates/
+│   ├── app2.html
+│   ├── web_ui_2.html
+│   └── web_ui.html
+└── tmp/
+>>>>>>> 02d86d6 (Changed project structure and added sample audio in README.md)
 ```
