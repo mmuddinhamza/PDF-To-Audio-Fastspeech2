@@ -101,12 +101,20 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 ```
 .
 ├── .gitignore
+├── environment.yml
 ├── README.md
 ├── requirements.txt
-├── text_preprocess_for_inference.py
-├── generated_audio/
+├── data/
+|   ├── generated-audio/
+|   ├── uploaded_PDFs
+|   ├── multilingualcharmap.json
+├── src/
+|   ├── app.py
+|   ├── get_phone_mapped_python.py
+|   ├── inference.py
+|   ├── text_preprocess_for_inference.py
+├── templates/
+    ├── web_ui_2.html
 ├── tmp/
-├── uploaded_PDFs/
-├── web_ui/
 └── models/
 ```
