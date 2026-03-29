@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Audio Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <style>
+        .pdf-container {
+            height: 80vh;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .file-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .file-item:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: none;
+        }
+        #pdfViewer {
+            min-height: 70vh;  /* Maintain minimum height */
+            width: 100%;       /* Use full available width */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-lg py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0"><i class="bi bi-file-earmark-music"></i> PDF to Audio Converter</h3>
+                    </div>
+                    <div class="card-body">
+                        <!-- Upload Section -->
+                        <div class="mb-4">
+                            <h5><i class="bi bi-upload"></i> Upload PDF</h5>
+                            <div class="input-group">
+                                <input type="file" id="pdfUpload" class="form-control" accept="application/pdf">
+                                <button class="btn btn-success" id="uploadBtn">
+                                    <span id="uploadText">Upload</span>
+                                    <span class="spinner-border spinner-border-sm" id="uploadSpinner"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PDF List Section -->
+                        <div class="mb-4">
+                            <h5><i class="bi bi-files"></i> Available PDFs</h5>
+                            <div class="file-list card">
+                                <div class="card-body p-0">
+                                    <ul class="list-group list-group-flush" id="pdfList">
+                                        <li class="list-group-item text-muted">No PDFs available</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PDF Viewer Section -->
+                        <div class="mb-4">
+                            <h5><i class="bi bi-file-earmark-pdf"></i> PDF Viewer</h5>
+                            <div class="pdf-container p-3" id="pdfViewer">
+                                <div class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="text-center text-muted">
+                                        <i class="bi bi-file-earmark-pdf" style="font-size: 3rem;"></i>
+                                        <p class="mt-2">Select a PDF to view</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Audio Player Section -->
+                        <div>
+                            <h5><i class="bi bi-music-note"></i> Audio Player</h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success" id="generateAudioBtn" disabled>
+                                    <span id="generateText">Listen to PDF</span>
+                                    <span class="spinner-border spinner-border-sm" id="generateSpinner"></span>
+                                </button>
+                                <audio id="audioPlayer" class="flex-grow-1" controls></audio>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedPdf = null;
+        const apiBaseUrl = "http://10.42.0.196:5000/";
+        
+        // DOM elements
+        const pdfUpload = document.getElementById('pdfUpload');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadSpinner = document.getElementById('uploadSpinner');
+        const uploadText = document.getElementById('uploadText');
+        const pdfList = document.getElementById('pdfList');
+        const pdfViewer = document.getElementById('pdfViewer');
+        const generateAudioBtn = document.getElementById('generateAudioBtn');
+        const generateSpinner = document.getElementById('generateSpinner');
+        const generateText = document.getElementById('generateText');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js';
+
+        // Load PDF list on page load
+        document.addEventListener('DOMContentLoaded', fetchPdfList);
+
+        // Upload PDF handler
+        uploadBtn.addEventListener('click', handlePdfUpload);
+
+        // Generate audio handler
+        generateAudioBtn.addEventListener('click', generateAudio);
+
+        // Fetch list of PDFs from server
+        async function fetchPdfList() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/list_files`);
+                const data = await response.json();
+                updatePdfList(data.pdf_files);
+            } catch (error) {
+                console.error('Error fetching PDF list:', error);
+                showAlert('Failed to load PDF list', 'danger');
+            }
+        }
+
+        // Update PDF list in UI
+        function updatePdfList(pdfFiles) {
+            pdfList.innerHTML = '';
+            
+            if (pdfFiles.length === 0) {
+                pdfList.innerHTML = '<li class="list-group-item text-muted">No PDFs available</li>';
+                return;
+            }
+
+            pdfFiles.forEach(pdf => {
+                const listItem = document.createElement('li');
+                listItem.className = 'list-group-item file-item d-flex justify-content-between align-items-center';
+                listItem.innerHTML = `
+                    <span>${pdf}</span>
+                    <button class="btn btn-sm btn-outline-primary view-pdf-btn" data-filename="${pdf}">
+                        <i class="bi bi-eye"></i> View
+                    </button>
+                `;
+                pdfList.appendChild(listItem);
+            });
+
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-pdf-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const filename = e.target.getAttribute('data-filename') || 
+                                    e.target.parentElement.getAttribute('data-filename');
+                    loadPdfFromServer(filename);
+                    selectedPdf = filename;
+                    generateAudioBtn.disabled = false;
+                });
+            });
+        }
+
+        // Handle PDF upload
+        async function handlePdfUpload() {
+            const file = pdfUpload.files[0];
+            if (!file) {
+                showAlert('Please select a PDF file first', 'warning');
+                return;
+            }
+
+            toggleSpinner(uploadSpinner, uploadText, true);
+            
+            try {
+                const base64String = await readFileAsBase64(file);
+                const response = await fetch(`${apiBaseUrl}/generate_audio`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pdf_base64: base64String,
+                        filename: file.name,
+                        language: "english",
+                        gender: "male",
+                        alpha: "1"
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('PDF uploaded successfully', 'success');
+                    fetchPdfList();
+                } else {
+                    throw new Error(data.error || 'Failed to upload PDF');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                showAlert(error.message, 'danger');
+            } finally {
+                toggleSpinner(uploadSpinner, uploadText, false);
+                pdfUpload.value = '';
+            }
+        }
+
+        // Load PDF from server and render
+        async function loadPdfFromServer(filename) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/get_pdf/${filename}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load PDF');
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                renderPdf(url);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                showAlert('Failed to load PDF', 'danger');
+            }
+        }
+
+        // Render PDF using PDF.js
+        function renderPdf(url) {
+            const loadingTask = pdfjsLib.getDocument(url);
+            
+            loadingTask.promise.then(pdf => {
+                pdfViewer.innerHTML = '';
+                
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    pdf.getPage(pageNum).then(page => {
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        pdfViewer.appendChild(canvas);
+                        
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        
+                        page.render({
+                            canvasContext: context,
+                            viewport: viewport
+                        });
+                    });
+                }
+            }).catch(error => {
+                console.error('PDF rendering error:', error);
+                pdfViewer.innerHTML = `
+                    <div class="d-flex justify-content-center align-items-center h-100">
+                        <div class="text-center text-danger">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Failed to render PDF</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Generate audio from selected PDF
+        async function generateAudio() {
+            if (!selectedPdf) {
+                showAlert('Please select a PDF first', 'warning');
+                return;
+            }
+
+            toggleSpinner(generateSpinner, generateText, true);
+            audioPlayer.src = '';
+            
+            try {
+                const audioFilename = selectedPdf.replace('.pdf', '.wav');
+                const response = await fetch(`${apiBaseUrl}/get_audio/${selectedPdf}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch audio');
+                }
+
+                const blob = await response.blob();
+                const audioUrl = URL.createObjectURL(blob);
+                audioPlayer.src = audioUrl;
+                audioPlayer.play();
+            } catch (error) {
+                console.error('Audio generation error:', error);
+                showAlert('Failed to generate or play audio', 'danger');
+            } finally {
+                toggleSpinner(generateSpinner, generateText, false);
+            }
+        }
+
+        // Helper function to read file as base64
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Helper to toggle spinner state
+        function toggleSpinner(spinner, textElement, show) {
+            spinner.style.display = show ? 'inline-block' : 'none';
+            textElement.style.display = show ? 'none' : 'inline-block';
+        }
+
+        // Show alert message
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Insert after the card header
+            const card = document.querySelector('.card');
+            card.insertBefore(alertDiv, card.children[1]);
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertDiv);
+                bsAlert.close();
+            }, 5000);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

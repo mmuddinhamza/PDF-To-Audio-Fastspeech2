@@ -1,0 +1,18 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Generated files
+generated_audio/
+uploaded_PDFs/
+tmp/
+
+# Environment file
+environment.yml
+
+#temporary file
