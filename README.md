@@ -121,4 +121,4 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 
 ## Project Architecture
 
-![Project Architecture](data/project_arch.png)
+<img src="data/project_arch.png" alt="Project Architecture" width="500"/>
