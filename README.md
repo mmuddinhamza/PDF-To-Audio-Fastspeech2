@@ -118,3 +118,7 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 ├── tmp/
 └── models/
 ```
+
+## Project Architecture
+
+![Project Architecture](data/project_arch.png)
