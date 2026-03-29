@@ -102,5 +102,5 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 ├── tmp/
 ├── uploaded_PDFs/
 ├── web_ui/
-└── models
+└── models/
 ```
