@@ -10,10 +10,7 @@ This project is a web application that converts PDF files to audio using the Fas
 
 ## Sample Demo
 
-Here is a sample of the generated audio:
-
-[Listen to a sample of the generated audio](data/generated_audio/hello.wav)
-
+[hello.wav](https://github.com/user-attachments/files/26341295/hello.wav)
 
 ## Technologies Used
 
