@@ -72,7 +72,7 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
     ```
 
 3.  **Place the models in the correct directories:**
-    Download the model files and place them in the corresponding language directory. For example, the English model files should be placed in the `models/urdu/` directory.
+    Download the model files and place them in the corresponding language directory. For example, the Urdu model files should be placed in the `models/urdu/` directory.
 
     Ensure the final structure looks like this:
     ```
@@ -81,7 +81,6 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
         ├── male / model
         └── female / model
     ```
-    *(Note: The actual file names might be different. Please refer to the Hugging Face repository for the correct file names.)*
 
 ## Usage
 
@@ -95,7 +94,6 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
     ```
     http://127.0.0.1:5000
     ```
-    *Note: The port might be different. Please check the application's output or code for the correct URL.*
 
 ## Project Structure
 ```
