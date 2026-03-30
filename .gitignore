@@ -9,8 +9,3 @@ __pycache__/
 
 # Generated files
 tmp/
-
-# Environment file
-environment.yml
-
-#temporary file
