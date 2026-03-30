@@ -8,6 +8,27 @@ This project is a web application that converts PDF files to audio using the Fas
 *   Convert PDF text to speech in multiple languages.
 *   Generate and play audio files.
 
+## Supported Languages
+
+The FastSpeech2_HS model supports the following languages:
+
+*   Assamese
+*   Bengali
+*   Bodo
+*   English
+*   Gujarati
+*   Hindi
+*   Kannada
+*   Malayalam
+*   Manipuri
+*   Marathi
+*   Odia
+*   Punjabi
+*   Rajasthani
+*   Tamil
+*   Telugu
+*   Urdu
+
 ## Sample Demo
 
 [hello.mp3](https://github.com/user-attachments/files/26341358/hello.mp3)
@@ -118,3 +139,7 @@ To use this application, you need to download the pre-trained FastSpeech2_HS mod
 <div align="center">
   <img src="data/project_arch.png" alt="Project Architecture" width="500"/>
 </div>
+
+## Acknowledgements
+
+The pre-trained FastSpeech2_HS models used in this project are from the following repository: [smtiitm/Fastspeech2_HS](https://github.com/smtiitm/Fastspeech2_HS). We are grateful to the authors for their contribution to the open-source community.
